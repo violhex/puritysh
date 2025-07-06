@@ -1,0 +1,10 @@
+{
+  "name": "@packages/validators",
+  "version": "0.1.0",
+  "description": "Shared Zod schema definitions for PurityOS apps",
+  "main": "index.ts",
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^3.25.67"
+  }
+} 
