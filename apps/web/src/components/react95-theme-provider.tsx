@@ -4,6 +4,7 @@ import { ThemeProvider } from 'styled-components';
 import original from 'react95/dist/themes/original';
 import { createGlobalStyle } from 'styled-components';
 import { styleReset } from 'react95';
+import '@react95/icons/icons.css';
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
