@@ -5,6 +5,7 @@ import "@react95/icons/icons.css";
 import Providers from "@/components/providers";
 import { ScreenFrame } from "@/components/os/frame";
 import AudioProvider from "@/components/audio-provider";
+import SparkleTrail from "@/components/effects/SparkleTrail";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
         <Providers>
           <AudioProvider>
             <ScreenFrame>
+              <SparkleTrail />
               {children}
             </ScreenFrame>
           </AudioProvider>

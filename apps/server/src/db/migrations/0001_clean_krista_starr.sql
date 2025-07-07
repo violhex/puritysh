@@ -1,0 +1,1 @@
+ALTER TABLE "tracks" ALTER COLUMN "profile_id" SET DATA TYPE text;

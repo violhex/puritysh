@@ -25,4 +25,4 @@ export function BrandingLabel() {
   );
 }
 
-export default BrandingLabel; 
+export default BrandingLabel;

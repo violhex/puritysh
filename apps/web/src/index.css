@@ -8,6 +8,32 @@
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
+@font-face {
+  font-family: "GothicPixels";
+  src: url("/fonts/GothicPixels.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Xaphan";
+  src: url("/fonts/Xaphan.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "VTC-SumiSlasherOneJitteryBasterd";
+  src: url("/fonts/VTC-SumiSlasherOneJitteryBasterd.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "HomeVideo";
+  src: url("/fonts/HomeVideo-E4X8l.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satonda";
+  src: url("/fonts/Satonda.ttf") format("truetype");
+  font-display: swap;
+}
+
 html,
 body {
   @apply bg-white dark:bg-gray-950;
@@ -131,4 +157,16 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.font-home-video {
+  font-family: "HomeVideo", monospace;
+}
+
+.font-gothic {
+  font-family: "GothicPixels", monospace;
+}
+
+.font-satonda {
+  font-family: "Satonda", cursive;
 }

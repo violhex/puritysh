@@ -8,4 +8,6 @@ export const SignUpSchema = z.object({
 
 export type SignUpInput = z.infer<typeof SignUpSchema>;
 
-// Add additional shared schemas below and export them here to keep a single entry-point. 
+// Add additional shared schemas below and export them here to keep a single entry-point.
+export { TrackSchema, TrackInput, TrackIdParam, type Track } from "./audio";
+export { CursorInput, CursorIdParam, type CursorInput as Cursor } from "./cursor"; 

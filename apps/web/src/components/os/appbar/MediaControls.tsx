@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useAudioPlayer } from "@/stores/useAudioPlayer";
 import type { AudioPlayerState } from "@/stores/useAudioPlayer";
+import { APPBAR_BUTTON_CLASS } from "./AppBar";
 
 interface MediaControlsProps {
   className?: string;
@@ -43,21 +44,19 @@ const MediaControls: React.FC<MediaControlsProps> = ({ className }) => {
 
   const muted = volume === 0;
 
-  const btnCls = "p-0 w-[45px] h-[45px] flex items-center justify-center";
-
   return (
     <div className={cn("flex items-center gap-1", className)}>
       <Button
         title="Shuffle (R)"
         aria-label="Toggle shuffle"
         onClick={toggleShuffle}
-        active={shuffle}
-        className={btnCls}
+        {...(shuffle ? { active: true } : {})}
+        className={APPBAR_BUTTON_CLASS}
       >
         <R95Icon name="Syncui120_32x32_4" />
       </Button>
 
-      <Button title="Previous (←)" aria-label="Previous track" onClick={prev} className={btnCls}>
+      <Button title="Previous (←)" aria-label="Previous track" onClick={prev} className={APPBAR_BUTTON_CLASS}>
         <R95Icon name="ArrowLeft_32x32_4" />
       </Button>
 
@@ -65,7 +64,7 @@ const MediaControls: React.FC<MediaControlsProps> = ({ className }) => {
         title="Play / Pause (Space)"
         aria-label="Play or pause"
         onClick={toggle}
-        className={btnCls}
+        className={APPBAR_BUTTON_CLASS}
       >
         <AnimatePresence initial={false} mode="wait">
           {isPlaying ? (
@@ -80,7 +79,7 @@ const MediaControls: React.FC<MediaControlsProps> = ({ className }) => {
         </AnimatePresence>
       </Button>
 
-      <Button title="Next (→)" aria-label="Next track" onClick={next} className={btnCls}>
+      <Button title="Next (→)" aria-label="Next track" onClick={next} className={APPBAR_BUTTON_CLASS}>
         <R95Icon name="ArrowRight_32x32_4" />
       </Button>
 
@@ -88,7 +87,7 @@ const MediaControls: React.FC<MediaControlsProps> = ({ className }) => {
         title="Mute"
         aria-label="Toggle mute"
         onClick={() => setVolume(muted ? 1 : 0)}
-        className={btnCls}
+        className={APPBAR_BUTTON_CLASS}
       >
         <R95Icon name={muted ? "Mute_32x32_4" : "Unmute_32x32_4"} />
       </Button>

@@ -14,8 +14,8 @@
   "dependencies": {
     "next": "15.3.0",
     "dotenv": "^16.5.0",
-    "@trpc/server": "^11.4.2",
-    "@trpc/client": "^11.4.2",
+    "@trpc/server": "^11.4.3",
+    "@trpc/client": "^11.4.3",
     "drizzle-orm": "^0.44.2",
     "@neondatabase/serverless": "^1.0.1",
     "better-auth": "^1.2.10",

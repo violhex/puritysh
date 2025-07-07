@@ -1,38 +1,66 @@
 "use client";
 
-import React, { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useAudioPlayer } from "@/stores/useAudioPlayer";
-import type { AudioPlayerState } from "@/stores/useAudioPlayer";
+import { trpc } from "@/utils/trpc";
 
-interface Props {
-  children: React.ReactNode;
-}
-
-export default function AudioProvider({ children }: Props) {
-  const { setVolume, toggle, next, prev, toggleShuffle } = useAudioPlayer((state: AudioPlayerState) => ({
-    setVolume: state.setVolume,
-    toggle: state.toggle,
-    next: state.next,
-    prev: state.prev,
-    toggleShuffle: state.toggleShuffle,
+/**
+ * Global provider that mounts once and wires:<br/>
+ * • Guest playlist fetch<br/>
+ * • Persisted volume restore<br/>
+ * • Keyboard shortcuts<br/>
+ */
+export default function AudioProvider({ children }: { children: React.ReactNode }) {
+  // Immutable actions from Zustand store
+  const {
+    setVolume,
+    toggle,
+    next,
+    prev,
+    toggleShuffle,
+  } = useAudioPlayer((s) => ({
+    setVolume: s.setVolume,
+    toggle: s.toggle,
+    next: s.next,
+    prev: s.prev,
+    toggleShuffle: s.toggleShuffle,
   }));
 
-  // Restore volume from localStorage
+  /* ---------------- Guest playlist fetch ---------------- */
+  const guestTracksQuery = useQuery(trpc.audio.guest.queryOptions());
+
+  useEffect(() => {
+    if (guestTracksQuery.data && Array.isArray(guestTracksQuery.data)) {
+      useAudioPlayer.setState({ tracks: guestTracksQuery.data });
+      // Autoplay first track once list is ready
+      const first = guestTracksQuery.data[0];
+      if (first) {
+        try {
+          useAudioPlayer.getState().play(first.id);
+        } catch {
+          /* autoplay blocked */
+        }
+      }
+    }
+  }, [guestTracksQuery.data]);
+
+  /* ---------------- Restore persisted volume ---------------- */
   useEffect(() => {
     const stored = localStorage.getItem("volume");
-    if (stored) {
-      const v = Number(stored);
-      if (!Number.isNaN(v)) setVolume(v);
-    }
+    if (stored) setVolume(Number(stored));
   }, [setVolume]);
 
-  // Keyboard shortcuts
+  /* ---------------- Keyboard shortcuts ---------------- */
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      if (target && ["INPUT", "TEXTAREA"].includes(target.tagName)) return;
-      switch (e.code) {
-        case "Space":
+    function handleKey(e: KeyboardEvent) {
+      // Skip when typing
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)) {
+        return;
+      }
+      switch (e.key) {
+        case " ": // Space
           e.preventDefault();
           toggle();
           break;
@@ -42,26 +70,34 @@ export default function AudioProvider({ children }: Props) {
         case "ArrowLeft":
           prev();
           break;
-        case "KeyR":
+        case "r":
+        case "R":
           toggleShuffle();
           break;
         case "ArrowUp":
-          if (e.ctrlKey) {
-            const vol = useAudioPlayer.getState().volume;
-            setVolume(Math.min(1, vol + 0.05));
-          }
+          if (e.ctrlKey) setVolume(Math.min(1, useAudioPlayer.getState().volume + 0.05));
           break;
         case "ArrowDown":
-          if (e.ctrlKey) {
-            const vol = useAudioPlayer.getState().volume;
-            setVolume(Math.max(0, vol - 0.05));
-          }
+          if (e.ctrlKey) setVolume(Math.max(0, useAudioPlayer.getState().volume - 0.05));
           break;
       }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
   }, [toggle, next, prev, toggleShuffle, setVolume]);
+
+  /* ---------------- Autoplay warm-up ---------------- */
+  const warmed = useRef(false);
+  useEffect(() => {
+    if (warmed.current) return;
+    warmed.current = true;
+    try {
+      const { play } = useAudioPlayer.getState();
+      play();
+    } catch {
+      // Autoplay blocked, ignore
+    }
+  }, []);
 
   return <>{children}</>;
 } 

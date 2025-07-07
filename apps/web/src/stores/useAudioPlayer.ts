@@ -32,8 +32,12 @@ export interface AudioPlayerState {
 }
 
 // Safe Audio creation on client only
-const createAudio = () =>
-  typeof Audio !== "undefined" ? new Audio() : ({} as HTMLAudioElement);
+const createAudio = () => {
+  if (typeof Audio === "undefined") return {} as HTMLAudioElement;
+  const el = new Audio();
+  el.crossOrigin = "anonymous";
+  return el;
+};
 
 const creator: StateCreator<AudioPlayerState> = (set, get) => {
   const audio = createAudio();
@@ -44,6 +48,7 @@ const creator: StateCreator<AudioPlayerState> = (set, get) => {
     const t = get().tracks.find((tr: TrackMeta) => tr.id === id);
     if (t) {
       audio.src = t.src;
+      audio.load();
       set({ track: t, duration: 0, currentTime: 0 });
     }
   };
@@ -65,7 +70,7 @@ const creator: StateCreator<AudioPlayerState> = (set, get) => {
   }
 
   // State & API
-  return {
+  const state: AudioPlayerState & { getAudio: () => HTMLAudioElement } = {
     isPlaying: false,
     currentTime: 0,
     duration: 0,
@@ -75,8 +80,13 @@ const creator: StateCreator<AudioPlayerState> = (set, get) => {
     tracks: [],
 
     play: (id?: string) => {
-      if (id) setTrackById(id);
-      audio.play();
+      if (id) {
+        setTrackById(id);
+      } else if (!get().track && get().tracks.length) {
+        // No current track – default to first in list
+        setTrackById(get().tracks[0].id);
+      }
+      audio.play().catch(() => {/* autoplay block */});
       set({ isPlaying: true });
     },
     pause: () => {
@@ -111,7 +121,10 @@ const creator: StateCreator<AudioPlayerState> = (set, get) => {
       localStorage.setItem("volume", value.toString());
       set({ volume: value });
     },
+    getAudio: () => audio,
   };
+
+  return state;
 };
 
 export const useAudioPlayer = create<AudioPlayerState>(creator); 

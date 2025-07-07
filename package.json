@@ -18,7 +18,10 @@
     "db:generate": "turbo -F server db:generate",
     "db:migrate": "turbo -F server db:migrate"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@uploadthing/react": "^7.3.2",
+    "uploadthing": "^7.7.3"
+  },
   "devDependencies": {
     "turbo": "^2.5.4",
     "@biomejs/biome": "^2.0.0"

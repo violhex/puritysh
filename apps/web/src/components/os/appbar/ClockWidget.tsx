@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "react95";
 import { format } from "date-fns";
+import { APPBAR_BUTTON_CLASS } from "./AppBar";
 
 const zones = ["local", "America/New_York", "Europe/London", "Asia/Tokyo", "UTC"] as const;
 
@@ -26,7 +27,7 @@ const ClockWidget: React.FC = () => {
       onClick={() => setZoneIdx((i) => (i + 1) % zones.length)}
       title={zone === "local" ? Intl.DateTimeFormat().resolvedOptions().timeZone : zone}
       aria-label={`Time is ${timeStr}`}
-      className="p-0 w-[45px] h-[45px] flex items-center justify-center"
+      className={APPBAR_BUTTON_CLASS}
     >
       <div className="flex flex-col leading-none text-[10px] font-mono">
         <span>{timeStr}</span>
